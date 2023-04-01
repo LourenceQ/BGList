@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bgList.API", "bgList.API\bgList.API.csproj", "{8CE25867-D4C8-4390-9135-67FD5BDB6744}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBgList", "MyBgList\MyBgList.csproj", "{01D268C4-6B0D-4AB6-9588-C580C1A89FB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8CE25867-D4C8-4390-9135-67FD5BDB6744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8CE25867-D4C8-4390-9135-67FD5BDB6744}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8CE25867-D4C8-4390-9135-67FD5BDB6744}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8CE25867-D4C8-4390-9135-67FD5BDB6744}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01D268C4-6B0D-4AB6-9588-C580C1A89FB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01D268C4-6B0D-4AB6-9588-C580C1A89FB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01D268C4-6B0D-4AB6-9588-C580C1A89FB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01D268C4-6B0D-4AB6-9588-C580C1A89FB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {ABB28369-AE5D-4CE0-AAFE-2899B8F09069}
+		SolutionGuid = {D7214451-82F2-4821-9F5E-C8DB5B2472EE}
 	EndGlobalSection
 EndGlobal
