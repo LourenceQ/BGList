@@ -8,6 +8,24 @@ builder.Services.AddEndpointsApiExplorer();
 // resolve conflitos de rotas duplicadas automaticamente
 builder.Services.AddSwaggerGen(opts => opts.ResolveConflictingActions(apiDesc => apiDesc.First()));
 
+#region CORS
+builder.Services.AddCors(options => 
+{ 
+    options.AddDefaultPolicy(cfg =>
+    {
+        cfg.WithOrigins(builder.Configuration["AllowedOrigins"]);
+        cfg.AllowAnyHeader();
+        cfg.AllowAnyMethod();
+    }); 
+    options.AddPolicy(name: "AnyOrigin", cfg =>
+    {
+        cfg.AllowAnyOrigin();
+        cfg.AllowAnyHeader();
+        cfg.AllowAnyMethod();
+    }); 
+});
+#endregion
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
