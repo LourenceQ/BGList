@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -52,12 +55,22 @@ else
 
 app.UseHttpsRedirection();
 
+app.UseCors();
+
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapControllers().RequireCors("AnyOrign");
 // using minimal api approach to get the same result as controller based api
-app.MapGet("/error", () => Results.Problem());
+//app.MapGet("/error", () => Results.Problem()) ;
 // emulating an exception
-app.MapGet("/error/test", () => { throw new Exception("test"); });
+//app.MapGet("/error/test", () => { throw new Exception("test"); });
 
+//
+app.MapGet("/error"
+    , [EnableCors("AnyOrigin")]
+    [ResponseCache(NoStore = true)] () => Results.Problem());
+app.MapGet("/error/test"
+    , [EnableCors("AnyOrigin")]
+    [ResponseCache(NoStore = true)] () => { throw new Exception("test"); });
+//
 app.Run();
