@@ -13,27 +13,27 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opts => opts.ResolveConflictingActions(apiDesc => apiDesc.First()));
 
 #region CORS
-builder.Services.AddCors(options => 
-{ 
+builder.Services.AddCors(options =>
+{
     options.AddDefaultPolicy(cfg =>
     {
         cfg.WithOrigins(builder.Configuration["AllowedOrigins"]);
         cfg.AllowAnyHeader();
         cfg.AllowAnyMethod();
-    }); 
+    });
     options.AddPolicy(name: "AnyOrigin", cfg =>
     {
         cfg.AllowAnyOrigin();
         cfg.AllowAnyHeader();
         cfg.AllowAnyMethod();
-    }); 
+    });
 });
 #endregion
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-/*if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -42,7 +42,8 @@ var app = builder.Build();
 else
 {
     app.UseExceptionHandler("/error");
-}*/
+}
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -69,13 +70,14 @@ app.MapControllers().RequireCors("AnyOrign");
 //
 app.MapGet("/error"
     , [EnableCors("AnyOrigin")]
-    [ResponseCache(NoStore = true)] () => Results.Problem());
+[ResponseCache(NoStore = true)] () => Results.Problem());
 
 app.MapGet("/error/test"
     , [EnableCors("AnyOrigin")]
-    [ResponseCache(NoStore = true)] () => { throw new Exception("test"); });
+[ResponseCache(NoStore = true)] () =>
+    { throw new Exception("test"); });
 
-app.MapGet("/cod/test", [EnableCors("AnyOrigin")] [ResponseCache(NoStore = true)] () =>
+app.MapGet("/cod/test", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () =>
 Results.Text("<script>" +
             "window.alert('Your client supports JavaScript!" +
             "\\r\\n\\r\\n" +
