@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +9,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 // resolve conflitos de rotas duplicadas automaticamente
-builder.Services.AddSwaggerGen(opts => opts.ResolveConflictingActions(apiDesc => apiDesc.First()));
+builder.Services.AddSwaggerGen();
+
+
 
 #region CORS
 builder.Services.AddCors(options =>
@@ -28,9 +29,12 @@ builder.Services.AddCors(options =>
         cfg.AllowAnyMethod();
     });
 });
+
 #endregion
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -62,20 +66,16 @@ app.UseCors();
 app.UseAuthorization();
 
 app.MapControllers().RequireCors("AnyOrign");
+
 // using minimal api approach to get the same result as controller based api
 //app.MapGet("/error", () => Results.Problem()) ;
 // emulating an exception
 //app.MapGet("/error/test", () => { throw new Exception("test"); });
 
-//
-app.MapGet("/error"
-    , [EnableCors("AnyOrigin")]
-[ResponseCache(NoStore = true)] () => Results.Problem());
 
-app.MapGet("/error/test"
-    , [EnableCors("AnyOrigin")]
-[ResponseCache(NoStore = true)] () =>
-    { throw new Exception("test"); });
+app.MapGet("/error", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () => Results.Problem());
+
+app.MapGet("/error/test", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () => { throw new Exception("test"); });
 
 app.MapGet("/cod/test", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () =>
 Results.Text("<script>" +
@@ -87,5 +87,5 @@ Results.Text("<script>" +
             "</script>" +
             "<noscript>Your client does not support JavaScript</noscript>",
             "text/html"));
-//
+
 app.Run();
