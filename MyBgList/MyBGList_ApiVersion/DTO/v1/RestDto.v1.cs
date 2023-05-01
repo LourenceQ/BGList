@@ -1,4 +1,4 @@
-﻿namespace MyBGList_ApiVersion.DTO.v1;
+﻿using MyBGList_ApiVersion.DTO.v1;
 
 public class RestDto<T>
 {

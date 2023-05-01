@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBGList_ApiVersion.DTO.v1;
 
-namespace MyBGList_ApiVersion.Controllers.v1;
+namespace MyBGList_ApiVersion.Controllers.v2;
 
 [Route("[controller]")]
 [ApiController]
