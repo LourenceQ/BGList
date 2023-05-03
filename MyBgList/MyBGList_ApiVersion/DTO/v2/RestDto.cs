@@ -1,7 +1,9 @@
-﻿namespace MyBGList_ApiVersion.DTO.v1;
+﻿using MyBgList.DTO.v1;
+
+namespace MyBgList.DTO.v2;
 
 public class RestDto<T>
 {
     public List<LinkDto> Links { get; set; } = new List<LinkDto>();
-    public T Data { get; set; } = default!;
+    public T Item { get; set; } = default(T)!;
 }

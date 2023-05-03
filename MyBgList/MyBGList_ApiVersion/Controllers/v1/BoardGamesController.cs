@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyBGList_ApiVersion.DTO.v1;
+using MyBgList.DTO.v1;
+using MyBGList_ApiVersion;
 
-namespace MyBGList_ApiVersion.Controllers.v1;
+namespace MyBgList.Controllers.v1;
 
-[Route("[controller]")]
+[Route("v{version:apiVersion}/[controller]")]
 [ApiController]
+[ApiVersion("1.0")]
+
 public class BoardGamesController : ControllerBase
 {
     private readonly ILogger<BoardGamesController> _logger;

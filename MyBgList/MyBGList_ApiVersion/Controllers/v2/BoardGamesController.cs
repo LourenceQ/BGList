@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MyBgList.DTO.v2;
+using MyBGList_ApiVersion;
 
-namespace MyBGList_ApiVersion.Controllers.v2;
+namespace MyBgList.Controllers.v2;
 
-[Route("[controller]")]
+[Route("v{version:apiVersion}/[controller]")]
 [ApiController]
+[ApiVersion("2.0")]
 public class BoardGamesController : ControllerBase
 {
     private readonly ILogger<BoardGamesController> _logger;
@@ -40,7 +43,7 @@ public class BoardGamesController : ControllerBase
     {
         return new RestDto<BoardGame[]>()
         {
-            Data = new BoardGame[]
+            Item = new BoardGame[]
             {
                 new BoardGame()
                 {
