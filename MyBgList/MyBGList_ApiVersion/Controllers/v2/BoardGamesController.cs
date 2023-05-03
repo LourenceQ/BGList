@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyBGList_ApiVersion.DTO.v1;
 
 namespace MyBGList_ApiVersion.Controllers.v2;
 
 [Route("[controller]")]
 [ApiController]
-public class BoardGamesControllerv1 : ControllerBase
+public class BoardGamesController : ControllerBase
 {
-    private readonly ILogger<BoardGamesControllerv1> _logger;
+    private readonly ILogger<BoardGamesController> _logger;
 
-    public BoardGamesControllerv1(ILogger<BoardGamesControllerv1> logger)
+    public BoardGamesController(ILogger<BoardGamesController> logger)
     {
         _logger = logger;
     }
@@ -62,9 +61,9 @@ public class BoardGamesControllerv1 : ControllerBase
                     Year = 2016
                 }
             },
-            Links = new List<LinkDto>
+            Links = new List<DTO.v1.LinkDto>
             {
-                new LinkDto(Url.Action(null, "BoardGames", null, Request.Scheme)!,
+                new DTO.v1.LinkDto(Url.Action(null, "BoardGames", null, Request.Scheme)!,
                     "self",
                     "GET"),
             }
