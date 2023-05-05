@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyBgList.DTO;
+using MyBgList.Models;
 
 namespace MyBgList.Controllers;
 
