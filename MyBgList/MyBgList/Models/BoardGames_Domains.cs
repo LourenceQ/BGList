@@ -12,4 +12,8 @@ public class BoardGames_Domains
     public int DomainId { get; set; }
     [Required]
     public DateTime CreatedDate { get; set; }
+
+    public BoardGame? BoardGame { get; set; }
+    public Domain? Domain { get; set; }
+
 }

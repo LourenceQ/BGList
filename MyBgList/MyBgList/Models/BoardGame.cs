@@ -39,4 +39,8 @@ public class BoardGame
     public DateTime CreatedDate { get; set; }
     [Required]
     public DateTime LastModifiedDate { get; set; }
+
+    public ICollection<BoardGames_Domains>? BoardGames_Domains { get; set; }
+    public ICollection<BoardGames_Mechanics>? BoardGames_Mechanics { get; set; }
+
 }
