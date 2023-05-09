@@ -8,6 +8,12 @@ public class ApplicationDbContext : DbContext
     {
     }
 
+    public DbSet<BoardGame> BoardGames => Set<BoardGame>();
+    public DbSet<Domain> Domains => Set<Domain>();
+    public DbSet<Mechanic> Mechanics => Set<Mechanic>();
+    public DbSet<BoardGames_Domains> BoardGames_Domains => Set<BoardGames_Domains>();
+    public DbSet<BoardGames_Mechanics> BoardGames_Mechanics => Set<BoardGames_Mechanics>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
