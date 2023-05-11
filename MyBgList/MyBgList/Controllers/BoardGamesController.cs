@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MyBgList.DTO;
 using MyBgList.Models;
 
@@ -9,10 +10,12 @@ namespace MyBgList.Controllers;
 public class BoardGamesController : ControllerBase
 {
     private readonly ILogger<BoardGamesController> _logger;
+    private readonly ApplicationDbContext _context;
 
-    public BoardGamesController(ILogger<BoardGamesController> logger)
+    public BoardGamesController(ILogger<BoardGamesController> logger, ApplicationDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
     /*[HttpGet(Name = "GetBoardGames")]
@@ -38,10 +41,23 @@ public class BoardGamesController : ControllerBase
 
     [HttpGet(Name = "GetBoardGames")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 6)]
-    public RestDto<BoardGame[]> Get()
+    public async Task<RestDto<BoardGame[]>> Get()
     {
-        return new RestDto<BoardGame[]>()
+        var query = _context.BoardGames;
+        return new MyBgList.DTO.RestDto<BoardGame[]>()
         {
+            Data = await query.ToArrayAsync(),
+            Links = new List<LinkDto>
+            {
+                new LinkDto(Url.Action(null, "BoardGames", null, Request.Scheme)!, "self", "GET")
+            }
+        };
+
+        #region old
+        /*return new RestDto<BoardGame[]>()
+        {
+
+        
             Data = new BoardGame[]
             {
                 new BoardGame()
@@ -69,6 +85,8 @@ public class BoardGamesController : ControllerBase
                     "self",
                     "GET"),
             }
-        };
+        };*/
+        #endregion
+
     }
 }
