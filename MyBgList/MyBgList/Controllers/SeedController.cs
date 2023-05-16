@@ -21,4 +21,19 @@ public class SeedController : ControllerBase
         _logger = logger;
         _env = env;
     }
+
+    [HttpPut(Name = "Seed")]
+    [ResponseCache(NoStore = true)]
+    public async Task<IActionResult> Put()
+    {
+        var skippedRows = 0;
+
+        return new JsonResult(new
+        {
+            BoardGames = _context.BoardGames.Count(),
+            Domains = _context.Domains.Count(),
+            Mechanics = _context.Mechanics.Count(),
+            SkippedRows = skippedRows
+        });
+    }
 }
