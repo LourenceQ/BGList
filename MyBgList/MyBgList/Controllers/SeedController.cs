@@ -1,5 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MyBgList.Models;
+using MyBgList.Models.Csv;
+using System.Globalization;
 
 namespace MyBgList.Controllers;
 
@@ -26,7 +31,35 @@ public class SeedController : ControllerBase
     [ResponseCache(NoStore = true)]
     public async Task<IActionResult> Put()
     {
+        var config = new CsvConfiguration(CultureInfo.GetCultureInfo("pt-BR"))
+        {
+            HasHeaderRecord = true,
+            Delimiter = ";"
+        };
+
+        using var reader = new StreamReader(System.IO.Path.Combine(_env.ContentRootPath, "Data/bgg_dataset.csv"));
+        using var csv = new CsvReader(reader, config);
+
+        var existingBoardGames = await _context.BoardGames.ToDictionaryAsync(bg => bg.Id);
+        var existingDomains = await _context.Domains.ToDictionaryAsync(d => d.Name);
+        var existingMechanics = await _context.Mechanics.ToDictionaryAsync(m => m.Name);
+
+        var now = DateTime.Now;
+
+        var records = csv.GetRecords<BggRecord>();
         var skippedRows = 0;
+
+        foreach (var record in records)
+        {
+            if (!record.ID.HasValue
+                    || string.IsNullOrEmpty(record.Name)
+                    || existingBoardGames.ContainsKey(record.ID.Value))
+            {
+                skippedRows++;
+                continue;
+            }
+        }
+
 
         return new JsonResult(new
         {
