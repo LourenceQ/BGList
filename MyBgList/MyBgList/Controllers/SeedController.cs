@@ -58,7 +58,88 @@ public class SeedController : ControllerBase
                 skippedRows++;
                 continue;
             }
+
+            var boardgame = new BoardGame()
+            {
+                Id = record.ID.Value,
+                Name = record.Name,
+                BGGRank = record.BGGRank ?? 0,
+                ComplexityAverage = record.ComplexityAverage ?? 0,
+                MaxPlayers = record.MaxPlayers ?? 0,
+                MinAge = record.MinAge ?? 0,
+                MinPlayers = record.MinPlayers ?? 0,
+                OwnedUsers = record.OwnedUsers ?? 0,
+                PlayTime = record.PlayTime ?? 0,
+                RatingAverage = record.RatingAverage ?? 0,
+                UsersRated = record.UsersRated ?? 0,
+                Year = record.YearPublished ?? 0,
+                CreatedDate = now,
+                LastModifiedDate = now,
+            };
+
+            _context.BoardGames.Add(boardgame);
+
+            if (!string.IsNullOrEmpty(record.Domains))
+            {
+                foreach (var domainName in record.Domains
+                    .Split(',', StringSplitOptions.TrimEntries)
+                    .Distinct(StringComparer.InvariantCultureIgnoreCase))
+                {
+                    var domain = existingDomains.GetValueOrDefault(domainName);
+                    if (domain == null)
+                    {
+                        domain = new Domain()
+                        {
+                            Name = domainName,
+                            CreatedDate = now,
+                            LastModifiedDate = now
+                        };
+                        _context.Domains.Add(domain);
+                        existingDomains.Add(domainName, domain);
+                    }
+
+                    _context.BoardGames_Domains.Add(new BoardGames_Domains()
+                    {
+                        BoardGame = boardgame,
+                        Domain = domain,
+                        CreatedDate = now
+                    });
+                }
+            }
+
+            if (!string.IsNullOrEmpty(record.Mechanics))
+            {
+                foreach (var mechanicName in record.Mechanics
+                    .Split(',', StringSplitOptions.TrimEntries)
+                    .Distinct(StringComparer.InvariantCultureIgnoreCase))
+                {
+                    var mechanic = existingMechanics.GetValueOrDefault(mechanicName);
+                    if (mechanic == null)
+                    {
+                        mechanic = new Mechanic()
+                        {
+                            Name = mechanicName,
+                            CreatedDate = now,
+                            LastModifiedDate = now
+                        };
+                        _context.Mechanics.Add(mechanic);
+                        existingMechanics.Add(mechanicName, mechanic);
+                    }
+                    _context.BoardGames_Mechanics.Add(new BoardGames_Mechanics()
+                    {
+                        BoardGame = boardgame,
+                        Mechanic = mechanic,
+                        CreatedDate = now
+                    });
+                }
+            }
         }
+
+        using var transaction = _context.Database.BeginTransaction();
+        _context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT BoardGames ON");
+        await _context.SaveChangesAsync();
+        _context.Database.ExecuteSqlRaw("SET IDENTITY_INSERT BoardGames OFF");
+        transaction.Commit();
 
 
         return new JsonResult(new
