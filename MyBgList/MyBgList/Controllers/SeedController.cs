@@ -37,7 +37,7 @@ public class SeedController : ControllerBase
             Delimiter = ";"
         };
 
-        using var reader = new StreamReader(System.IO.Path.Combine(_env.ContentRootPath, "Data/bgg_dataset.csv"));
+        using var reader = new StreamReader(System.IO.Path.Combine(_env.ContentRootPath, "Seed/bgg_dataset.csv"));
         using var csv = new CsvReader(reader, config);
 
         var existingBoardGames = await _context.BoardGames.ToDictionaryAsync(bg => bg.Id);
