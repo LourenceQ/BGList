@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyBgList.DTO;
 using MyBgList.Models;
+using System.Linq.Dynamic.Core;
 
 namespace MyBgList.Controllers;
 
@@ -41,9 +42,16 @@ public class BoardGamesController : ControllerBase
 
     [HttpGet(Name = "GetBoardGames")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 6)]
-    public async Task<RestDto<BoardGame[]>> Get(int pageIndex = 0, int pageSize = 10)
+    public async Task<RestDto<BoardGame[]>> Get(int pageIndex = 0
+        , int pageSize = 10
+        , string sortColumn = "Name"
+        , string sortOrder = "ASC")
     {
-        var query = _context.BoardGames.Skip(pageIndex * pageSize).Take(pageSize);
+        var query = _context.BoardGames
+            .OrderBy($"{sortColumn} {sortOrder}")
+            .Skip(pageIndex * pageSize)
+            .Take(pageSize);
+
         return new MyBgList.DTO.RestDto<BoardGame[]>()
         {
             Data = await query.ToArrayAsync(),
@@ -52,7 +60,7 @@ public class BoardGamesController : ControllerBase
             RecordCount = await _context.BoardGames.CountAsync(),
             Links = new List<LinkDto>
             {
-                new LinkDto(Url.Action(null, "BoardGames", null, Request.Scheme)!, "self", "GET")
+                new LinkDto(Url.Action(null, "BoardGames", new { pageIndex, pageSize }, Request.Scheme)!, "self", "GET")
             }
         };
 
