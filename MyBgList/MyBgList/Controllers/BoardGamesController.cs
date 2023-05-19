@@ -45,12 +45,15 @@ public class BoardGamesController : ControllerBase
     public async Task<RestDto<BoardGame[]>> Get(int pageIndex = 0
         , int pageSize = 10
         , string sortColumn = "Name"
-        , string sortOrder = "ASC")
+        , string sortOrder = "ASC"
+        , string? filterQuery = null)
     {
-        var query = _context.BoardGames
-            .OrderBy($"{sortColumn} {sortOrder}")
-            .Skip(pageIndex * pageSize)
-            .Take(pageSize);
+        var query = _context.BoardGames.AsQueryable();
+
+        if (!string.IsNullOrEmpty(filterQuery))
+            query = query.Where(b => b.Name.Contains(filterQuery));
+
+        query = query.OrderBy($"{sortColumn} {sortOrder}").Skip(pageIndex * pageSize).Take(pageSize);
 
         return new MyBgList.DTO.RestDto<BoardGame[]>()
         {
@@ -60,7 +63,7 @@ public class BoardGamesController : ControllerBase
             RecordCount = await _context.BoardGames.CountAsync(),
             Links = new List<LinkDto>
             {
-                new LinkDto(Url.Action(null, "BoardGames", new { pageIndex, pageSize }, Request.Scheme)!, "self", "GET")
+                new LinkDto(Url.Action(null, "BoardGames", new { pageIndex, pageSize}, Request.Scheme)!, "self", "GET")
             }
         };
 
