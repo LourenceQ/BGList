@@ -103,4 +103,33 @@ public class BoardGamesController : ControllerBase
         #endregion
 
     }
+
+    [HttpPost(Name = "UpdateBoardGame")]
+    [ResponseCache(NoStore = true)]
+    public async Task<RestDto<BoardGame?>> Post(BoardGameDto model)
+    {
+        var boardGame = await _context.BoardGames.Where(b => b.Id == model.Id)
+            .FirstOrDefaultAsync();
+
+        if (boardGame != null)
+        {
+            if (!string.IsNullOrEmpty(model.Name))
+                boardGame.Name = model.Name;
+            if (model.Year.HasValue && model.Year.Value > 0)
+                boardGame.Year = model.Year.Value;
+
+            boardGame.LastModifiedDate = DateTime.Now;
+            _context.BoardGames.Update(boardGame);
+            await _context.SaveChangesAsync();
+        }
+
+        return new RestDto<BoardGame?>()
+        {
+            Data = boardGame,
+            Links = new List<LinkDto>
+            {
+                new LinkDto(Url.Action(null, "BoardGames", model, Request.Scheme)!, "self", "POST")
+            }
+        };
+    }
 }
