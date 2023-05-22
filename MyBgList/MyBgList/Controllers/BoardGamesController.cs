@@ -132,4 +132,27 @@ public class BoardGamesController : ControllerBase
             }
         };
     }
+
+    [HttpDelete(Name = "DeleteBoardGame")]
+    [ResponseCache(NoStore = true)]
+    public async Task<RestDto<BoardGame?>> Delete(int id)
+    {
+        var boardGame = await _context.BoardGames
+            .Where(b => b.Id == id)
+            .FirstOrDefaultAsync();
+        if (boardGame != null)
+        {
+            _context.BoardGames.Remove(boardGame);
+            await _context.SaveChangesAsync();
+        }
+
+        return new RestDto<BoardGame?>()
+        {
+            Data = boardGame,
+            Links = new List<LinkDto>
+            {
+                new LinkDto(Url.Action(null, "BoardGames", id, Request.Scheme)!, "self", "DELETE")
+            }
+        };
+    }
 }
