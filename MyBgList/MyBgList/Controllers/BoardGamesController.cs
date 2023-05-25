@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyBgList.Attributes;
 using MyBgList.DTO;
 using MyBgList.Models;
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Dynamic.Core;
 
 namespace MyBgList.Controllers;
@@ -42,10 +44,11 @@ public class BoardGamesController : ControllerBase
 
     [HttpGet(Name = "GetBoardGames")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 6)]
-    public async Task<RestDto<BoardGame[]>> Get(int pageIndex = 0
-        , int pageSize = 10
-        , string sortColumn = "Name"
-        , string sortOrder = "ASC"
+    public async Task<RestDto<BoardGame[]>> Get(
+        int pageIndex = 0
+        , [Range(1, 100)] int pageSize = 10
+        , [SortColumnValidator(typeof(BoardGameDto))] string? sortColumn = "Name"
+        , [SortOrderValidator] string? sortOrder = "ASC"
         , string? filterQuery = null)
     {
         var query = _context.BoardGames.AsQueryable();
