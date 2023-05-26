@@ -44,29 +44,24 @@ public class BoardGamesController : ControllerBase
 
     [HttpGet(Name = "GetBoardGames")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 6)]
-    public async Task<RestDto<BoardGame[]>> Get(
-        int pageIndex = 0
-        , [Range(1, 100)] int pageSize = 10
-        , [SortColumnValidator(typeof(BoardGameDto))] string? sortColumn = "Name"
-        , [SortOrderValidator] string? sortOrder = "ASC"
-        , string? filterQuery = null)
+    public async Task<RestDto<BoardGame[]>> Get([FromQuery] RequestDto input)
     {
         var query = _context.BoardGames.AsQueryable();
 
-        if (!string.IsNullOrEmpty(filterQuery))
-            query = query.Where(b => b.Name.Contains(filterQuery));
+        if (!string.IsNullOrEmpty(input.FilterQuery))
+            query = query.Where(b => b.Name.Contains(input.FilterQuery));
 
-        query = query.OrderBy($"{sortColumn} {sortOrder}").Skip(pageIndex * pageSize).Take(pageSize);
+        query = query.OrderBy($"{input.SortColumn} {input.SortOrder}").Skip(input.PageIndex * input.PageSize).Take(input.PageSize);
 
         return new MyBgList.DTO.RestDto<BoardGame[]>()
         {
             Data = await query.ToArrayAsync(),
-            PageIndex = pageIndex,
-            PageSize = pageSize,
+            PageIndex = input.PageIndex,
+            PageSize = input.PageSize,
             RecordCount = await _context.BoardGames.CountAsync(),
             Links = new List<LinkDto>
             {
-                new LinkDto(Url.Action(null, "BoardGames", new { pageIndex, pageSize}, Request.Scheme)!, "self", "GET")
+                new LinkDto(Url.Action(null, "BoardGames", new { input.PageIndex, input.PageSize}, Request.Scheme)!, "self", "GET")
             }
         };
 
