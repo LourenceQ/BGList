@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyBgList.Attributes;
 using MyBgList.DTO;
 using MyBgList.Models;
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Dynamic.Core;
 
 namespace MyBgList.Controllers;
@@ -44,7 +42,7 @@ public class BoardGamesController : ControllerBase
 
     [HttpGet(Name = "GetBoardGames")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 6)]
-    public async Task<RestDto<BoardGame[]>> Get([FromQuery] RequestDto input)
+    public async Task<RestDto<BoardGame[]>> Get([FromQuery] RequestDto<BoardGameDto> input)
     {
         var query = _context.BoardGames.AsQueryable();
 
