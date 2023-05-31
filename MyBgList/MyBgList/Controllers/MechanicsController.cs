@@ -71,11 +71,31 @@ public class MechanicsController : ControllerBase
 
         return new RestDto<Mechanic?>()
         {
-            Data = mechanic
-            ,
+            Data = mechanic,
             Links = new List<LinkDto>
             {
                 new LinkDto(Url.Action(null, "Mechanics", model, Request.Scheme)!, "self", "POST")
+            }
+        };
+    }
+
+    public async Task<RestDto<Mechanic?>> Delete(int id)
+    {
+        var mechanic = await _context.Mechanics.Where(b => b.Id == id)
+            .FirstOrDefaultAsync();
+
+        if (mechanic != null)
+        {
+            _context.Mechanics.Remove(mechanic);
+            await _context.SaveChangesAsync();
+        }
+
+        return new RestDto<Mechanic?>()
+        {
+            Data = mechanic,
+            Links = new List<LinkDto>
+            {
+                new LinkDto(Url.Action(null, "Mechanics", id, Request.Scheme)!, "self", "DELETE")
             }
         };
     }
