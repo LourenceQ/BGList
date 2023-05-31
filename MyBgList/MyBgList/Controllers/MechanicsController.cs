@@ -51,4 +51,32 @@ public class MechanicsController : ControllerBase
                 }
         };
     }
+
+    [HttpPost(Name = "UpdateMechanic")]
+    [ResponseCache(NoStore = true)]
+    public async Task<RestDto<Mechanic?>> Post(MechanicDto model)
+    {
+        var mechanic = await _context.Mechanics.Where(b => b.Id == model.Id)
+            .FirstOrDefaultAsync();
+        if (mechanic != null)
+        {
+            if (!string.IsNullOrEmpty(model.Name))
+                mechanic.Name = model.Name;
+
+            mechanic.LastModifiedDate = DateTime.Now;
+            _context.Mechanics.Update(mechanic);
+
+            await _context.SaveChangesAsync();
+        }
+
+        return new RestDto<Mechanic?>()
+        {
+            Data = mechanic
+            ,
+            Links = new List<LinkDto>
+            {
+                new LinkDto(Url.Action(null, "Mechanics", model, Request.Scheme)!, "self", "POST")
+            }
+        };
+    }
 }
