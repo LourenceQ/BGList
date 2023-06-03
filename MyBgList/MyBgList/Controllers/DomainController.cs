@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MyBgList.DTO;
 using MyBgList.Models;
 using System.Diagnostics;
+using System.Linq.Dynamic.Core;
 
 namespace MyBgList.Controllers;
 
@@ -16,8 +17,8 @@ public class DomainController : ControllerBase
 
     [HttpGet(Name = "GetDomains")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
-    [ManualValidationFilter]
-    public async Task<ActionResult<RestDto<Domain[]>>> Get([FromQuery] RequesDto<DomainDto> input)
+    //[ManualValidationFilter]
+    public async Task<ActionResult<RestDto<Domain[]>>> Get([FromQuery] RequestDto<DomainDto> input)
     {
         if (!ModelState.IsValid)
         {
