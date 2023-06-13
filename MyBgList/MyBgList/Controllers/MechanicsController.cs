@@ -79,6 +79,8 @@ public class MechanicsController : ControllerBase
         };
     }
 
+    [HttpDelete(Name = "DeleteMechanic")]
+    [ResponseCache(NoStore = true)]
     public async Task<RestDto<Mechanic?>> Delete(int id)
     {
         var mechanic = await _context.Mechanics.Where(b => b.Id == id)

@@ -47,6 +47,11 @@ builder.Services.AddCors(options =>
 
 #endregion
 
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressInferBindingSourcesForParameters = true;
+});
+
 var app = builder.Build();
 
 
