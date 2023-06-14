@@ -47,10 +47,11 @@ builder.Services.AddCors(options =>
 
 #endregion
 
+/*Code replaced by the [ManualValidationFilter] attribute
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressInferBindingSourcesForParameters = true;
-});
+});*/
 
 var app = builder.Build();
 

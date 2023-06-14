@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyBgList.Attributes;
 using MyBgList.DTO;
 using MyBgList.Models;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ public class DomainController : ControllerBase
 
     [HttpGet(Name = "GetDomains")]
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 60)]
-    //[ManualValidationFilter]
+    [ManualValidationFilter]
     public async Task<ActionResult<RestDto<Domain[]>>> Get([FromQuery] RequestDto<DomainDto> input)
     {
         if (!ModelState.IsValid)
