@@ -6,7 +6,14 @@ using MyBgList.Attributes;
 using MyBgList.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Logging.ClearProviders()
+    .AddSimpleConsole(options =>
+    {
+        options.SingleLine = true;
+        options.TimestampFormat = "HH:mm:ss ";
+        options.UseUtcTimestamp = true;
+    })
+    .AddDebug();
 // Add services to the container.
 
 builder.Services.AddControllers(options =>
@@ -130,7 +137,7 @@ app.MapGet("/error",
     details.Status = StatusCodes.Status500InternalServerError;
     return Results.Problem(details);
 });
-app.MapGet("/error", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () => Results.Problem());
+//app.MapGet("/error", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () => Results.Problem());
 
 app.MapGet("/error/test", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () => { throw new Exception("test"); });
 
