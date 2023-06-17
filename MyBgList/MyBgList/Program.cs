@@ -6,14 +6,20 @@ using MyBgList.Attributes;
 using MyBgList.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Logging.ClearProviders()
+/*builder.Logging.ClearProviders()
     .AddSimpleConsole(options =>
     {
         options.SingleLine = true;
         options.TimestampFormat = "HH:mm:ss ";
         options.UseUtcTimestamp = true;
     })
+    .AddDebug();*/
+
+builder.Logging
+    .ClearProviders()
+    .AddSimpleConsole()
     .AddDebug();
+
 // Add services to the container.
 
 builder.Services.AddControllers(options =>
