@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyBgList.Attributes;
+using MyBgList.Constants;
 using MyBgList.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -130,17 +131,18 @@ app.MapGet("/error",
 [EnableCors("AnyOrigin")]
 [ResponseCache(NoStore = true)] (HttpContext context) =>
 {
-    var exceptionHandler =
-    context.Features.Get<IExceptionHandlerPathFeature>();
+    var exceptionHandler = context.Features.Get<IExceptionHandlerPathFeature>();
     // TODO: logging, sending notifications, and more #C
     var details = new ProblemDetails();
     details.Detail = exceptionHandler?.Error.Message;
-    details.Extensions["traceId"] =
-    System.Diagnostics.Activity.Current?.Id
-    ?? context.TraceIdentifier;
-    details.Type =
-    "https://tools.ietf.org/html/rfc7231#section-6.6.1";
+    details.Extensions["traceId"] = System.Diagnostics.Activity.Current?.Id ?? context.TraceIdentifier;
+    details.Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1";
     details.Status = StatusCodes.Status500InternalServerError;
+
+    app.Logger.LogError(CustomLogEvents.Error_Get
+        , exceptionHandler?.Error
+        , "An unhandled exception occurred.");
+
     return Results.Problem(details);
 });
 //app.MapGet("/error", [EnableCors("AnyOrigin")][ResponseCache(NoStore = true)] () => Results.Problem());

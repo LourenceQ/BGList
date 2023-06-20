@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MyBgList.Constants;
 using MyBgList.DTO;
 using MyBgList.Models;
 using System.Linq.Dynamic.Core;
@@ -44,7 +45,7 @@ public class BoardGamesController : ControllerBase
     [ResponseCache(Location = ResponseCacheLocation.Any, Duration = 6)]
     public async Task<RestDto<BoardGame[]>> Get([FromQuery] RequestDto<BoardGameDto> input)
     {
-        _logger.LogInformation("Get method started.");
+        _logger.LogInformation(CustomLogEvents.BoardGamesController_Get, "Get method started.");
 
         var query = _context.BoardGames.AsQueryable();
 
