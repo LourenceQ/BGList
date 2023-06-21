@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using MyBgList.Attributes;
 using MyBgList.Constants;
 using MyBgList.Models;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 
 var builder = WebApplication.CreateBuilder(args);
 /*builder.Logging.ClearProviders()
@@ -19,8 +21,44 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging
     .ClearProviders()
     .AddSimpleConsole()
-    .AddDebug();
+    .AddDebug()
+    .AddApplicationInsights(builder
+        .Configuration["Azure:ApplicationInsights:InstrumentationKey"], loggerOptions => { });
 
+builder.Host.UseSerilog((ctx, lc) =>
+{
+    lc.ReadFrom.Configuration(ctx.Configuration);
+    lc.Enrich.WithMachineName();
+    lc.Enrich.WithThreadId();
+    lc.WriteTo.File("Logs/log.txt",
+        outputTemplate:
+            "{Timestamp:HH:mm:ss} [{Level:u3}] " +
+            "[{MachineName} #{ThreadId}] " +
+            "{Message:lj}{NewLine}{Exception}",
+        rollingInterval: RollingInterval.Day);
+    lc.WriteTo.MSSqlServer(
+        connectionString:
+            ctx.Configuration.GetConnectionString("DefaultConnection"),
+        sinkOptions: new MSSqlServerSinkOptions
+        {
+            TableName = "LogEvents",
+            AutoCreateSqlTable = true
+        },
+        columnOptions: new ColumnOptions()
+        {
+            AdditionalColumns = new SqlColumn[]
+            {
+                new SqlColumn()
+                {
+                    ColumnName = "SourceContext",
+                    PropertyName = "SourceContext",
+                    DataType = System.Data.SqlDbType.NVarChar
+                }
+            }
+        }
+        );
+},
+    writeToProviders: true);
 // Add services to the container.
 
 builder.Services.AddControllers(options =>
