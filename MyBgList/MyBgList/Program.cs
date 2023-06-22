@@ -28,8 +28,8 @@ builder.Logging
 builder.Host.UseSerilog((ctx, lc) =>
 {
     lc.ReadFrom.Configuration(ctx.Configuration);
-    lc.Enrich.WithMachineName();
-    lc.Enrich.WithThreadId();
+    /*lc.Enrich.WithMachineName();
+    lc.Enrich.WithThreadId();*/
     lc.WriteTo.File("Logs/log.txt",
         outputTemplate:
             "{Timestamp:HH:mm:ss} [{Level:u3}] " +
@@ -164,6 +164,14 @@ app.MapControllers().RequireCors("AnyOrign");
 //app.MapGet("/error", () => Results.Problem()) ;
 // emulating an exception
 //app.MapGet("/error/test", () => { throw new Exception("test"); });
+
+app.MapGet("/cache/test/1",
+[EnableCors("AnyOrigin")]
+(HttpContext context) =>
+{
+    context.Response.Headers["cache-control"] = "no-cache, no-store";
+    return Results.Ok();
+});
 
 app.MapGet("/error",
 [EnableCors("AnyOrigin")]
