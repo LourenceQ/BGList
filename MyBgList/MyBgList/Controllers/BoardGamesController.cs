@@ -4,6 +4,8 @@ using MyBgList.Constants;
 using MyBgList.DTO;
 using MyBgList.Models;
 using System.Linq.Dynamic.Core;
+using Microsoft.Extensions.Caching.Memory;
+using System.Text.Json;
 
 namespace MyBgList.Controllers;
 
@@ -13,11 +15,15 @@ public class BoardGamesController : ControllerBase
 {
     private readonly ILogger<BoardGamesController> _logger;
     private readonly ApplicationDbContext _context;
+    private readonly IMemoryCache _memoryCache;
 
-    public BoardGamesController(ILogger<BoardGamesController> logger, ApplicationDbContext context)
+    public BoardGamesController(ILogger<BoardGamesController> logger
+        , ApplicationDbContext context
+        , IMemoryCache memoryCache)
     {
         _logger = logger;
         _context = context;
+        _memoryCache = memoryCache;
     }
 
     /*[HttpGet(Name = "GetBoardGames")]
@@ -47,22 +53,36 @@ public class BoardGamesController : ControllerBase
     {
         _logger.LogInformation(CustomLogEvents.BoardGamesController_Get, "Get method started.");
 
-        var query = _context.BoardGames.AsQueryable();
+        BoardGame[]? result = null;
+        var cachekey = $"{input.GetType()}- {JsonSerializer.Serialize(input)}";
 
-        if (!string.IsNullOrEmpty(input.FilterQuery))
-            query = query.Where(b => b.Name.Contains(input.FilterQuery));
+        if (!_memoryCache.TryGetValue<BoardGame[]>(cachekey, out result))
+        {
+            var query = _context.BoardGames.AsQueryable();
 
-        query = query.OrderBy($"{input.SortColumn} {input.SortOrder}").Skip(input.PageIndex * input.PageSize).Take(input.PageSize);
+            if (!string.IsNullOrEmpty(input.FilterQuery))
+                query = query.Where(b => b.Name.Contains(input.FilterQuery));
+
+            query = query.OrderBy($"{input.SortColumn} {input.SortOrder}")
+                .Skip(input.PageIndex * input.PageSize)
+                .Take(input.PageSize);
+
+            result = await query.ToArrayAsync();
+            _memoryCache.Set(cachekey, result, new TimeSpan(0, 0, 30));
+        }
+
 
         return new MyBgList.DTO.RestDto<BoardGame[]>()
         {
-            Data = await query.ToArrayAsync(),
+            Data = result,
             PageIndex = input.PageIndex,
             PageSize = input.PageSize,
             RecordCount = await _context.BoardGames.CountAsync(),
             Links = new List<LinkDto>
             {
-                new LinkDto(Url.Action(null, "BoardGames", new { input.PageIndex, input.PageSize}, Request.Scheme)!, "self", "GET")
+                new LinkDto(Url.Action(null, "BoardGames"
+                , new { input.PageIndex, input.PageSize}, Request.Scheme)!
+                , "self", "GET")
             }
         };
 

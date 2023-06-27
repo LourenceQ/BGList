@@ -114,6 +114,18 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressInferBindingSourcesForParameters = true;
 });*/
 
+#region SERVER SIDE CACHING
+/*builder.Services.AddResponseCaching(options =>
+{
+    options.MaximumBodySize = 32 * 1024 * 1024;
+    options.SizeLimit = 50 * 1024 * 1024;
+});*/
+#endregion
+
+#region IN MEMORY CACHING
+builder.Services.AddMemoryCache();
+#endregion
+
 var app = builder.Build();
 
 app.UseExceptionHandler(action =>
@@ -163,6 +175,10 @@ else
 app.UseHttpsRedirection();
 
 app.UseCors();
+
+#region SERVER SIDE CACHING
+// app.UseResponseCaching();
+#endregion
 
 app.UseAuthorization();
 app.Use((context, next) =>
