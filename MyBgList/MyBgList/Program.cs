@@ -67,6 +67,14 @@ builder.Services.AddControllers(options =>
     options.ModelBindingMessageProvider.SetValueMustNotBeNullAccessor((x) => $"The field {x} must be a number.");
     options.ModelBindingMessageProvider.SetAttemptedValueIsInvalidAccessor((x, y) => $"¨The value '{x}' is not valid for {y}.");
     options.ModelBindingMessageProvider.SetMissingKeyOrValueAccessor(() => $"A value is required.");
+
+    options.CacheProfiles.Add("NoCache", new CacheProfile() { NoStore = true });
+    options.CacheProfiles.Add("Any-60",
+        new CacheProfile()
+        {
+            Location = ResponseCacheLocation.Any,
+            Duration = 60
+        });
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
